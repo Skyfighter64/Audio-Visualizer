@@ -1,0 +1,3 @@
+[submodule "Python-ALUP"]
+	path = Python-ALUP
+	url = git@github.com:Skyfighter64/Python-ALUP.git
