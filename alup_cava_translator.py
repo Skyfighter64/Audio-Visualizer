@@ -46,22 +46,30 @@ bars = 10       # this should be automatically set to the number of leds reporte
 arduino = Device()
 
 def main():
+    print("Connecting to Serial ALUP at %s, %d", (COM_PORT, BAUD_RATE))
     # Connect to ALUP
     arduino.SerialConnect(COM_PORT, BAUD_RATE)
+    # ALUP connection status is currently untracked in python-alup (bruh)
 
     # create tmp folder if non-existent
     Path(folder).mkdir(parents=False, exist_ok=True)
+    print("Made sure tmp folder at " + folder + " exists")
     # clear tmp folder 
     #ClearDirectory(TMP_DIRECTORY) # temporarily disabled to do rm -rf concerns (high risks)
     # create temporary fifo
     fifo_path = CreateFifo(TMP_DIRECTORY)
+    print("Created fifo at " + fifo_path)
 
     # Create custom config 
     config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
+    print("Saved custom config to " + config_path)
 
+
+    print("Running CAVA with config " + config_path)
     # Start Cava with created config
     cava_process = subprocess.Popen(["cava","-p", config_path])
 
+    print("Running visualizer...")
     # read from fifo file
     with open(fifo_path, mode="rb") as input_file:
         while(True):
@@ -75,6 +83,8 @@ def main():
                 arduino.frame.colors.append(sample)
             # send led frame
             arduino.Send()
+
+    print("Done.")
 
 
 # remove all contents in directory recursively
