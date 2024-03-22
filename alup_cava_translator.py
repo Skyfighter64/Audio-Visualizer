@@ -116,22 +116,26 @@ def ReplaceLine(lines, regex, replacement_line):
         print("No match found for regex \"" + str(regex) + "\". Appended line \"" + replacement_line + "\" at the end of file")
 
 
-def CreateCavaConfig(num_leds, folder):
-    default_config_path = Path(__file__).parent.resolve() + "cava_config"
-    temp_config_file_name = "cava_tmp_config"
+def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
+    # get the preconfigured config from the same folder as the script
+    default_config_path = Path(__file__).parent.resolve() + "/cava_config"
+    tmp_config_path =  Path(__file__).parent.resolve() + "/cava_tmp_config"
+
     # read default config
     with open(default_config_path, "r") as file:
         config_lines = file.readlines()
+
     # change bars to num_leds
     ReplaceLine(config_lines, regex = r"^ ?;? ?bars ?= ?[0-9]+ ?$", replacement_line = "bars = " + str(num_leds))
-    # make sure bit_format is 8 bit
-    ReplaceLine(config_lines, regex = r"^ ?;? ?sample_bits ?= ?[0-9]+ ?$", replacement_line = "sample_bits = 8")
-    # make sure mode is raw
-    # make sure data format is binary
     # set fifo target file to fifo path
+    ReplaceLine(config_lines, regex = r"^ ?;? ?raw_target ?= ?.* ?$", replacement_line = "raw_target =" + str(fifo_path))
+    
+    # paste into new custom config file
+    with open(tmp_config_path, "w+") as output_file:
+        output_file.writelines(lines)
 
-    # paste into new custom config to temp folder
     # return path of custom config 
+    return tmp_config_path
 
 
 """      
