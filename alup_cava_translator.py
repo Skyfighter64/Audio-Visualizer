@@ -4,12 +4,17 @@ import os
 import shutil
 from pathlib import Path
 import tempfile
+import sys
+sys.path.insert(0,'Python-ALUP')
 # import the main library
-from Python-ALUP.src.Device import Device
+import importlib  
+Device = getattr(importlib.import_module("Python-ALUP.src.Device"), "Device")
+#from Python-ALUP.src.Device import Device
 # import command definitions
-from Python-ALUP.src.Frame import Command
-from Python-ALUP.src.Frame import Frame
-
+Command = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Command")
+#from Python-ALUP.src.Frame import Command
+#from Python-ALUP.src.Frame import Frame
+Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
 # note: make sure, alsa is configured accordingly and loopback devices are active
 
 
