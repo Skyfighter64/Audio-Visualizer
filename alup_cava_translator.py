@@ -57,7 +57,7 @@ def main():
     fifo_path = CreateFifo(TMP_DIRECTORY)
 
     # Create custom config 
-    config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY)
+    config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
 
     # Start Cava with created config
     cava_process = subprocess.Popen(["cava","-p", config_path])
