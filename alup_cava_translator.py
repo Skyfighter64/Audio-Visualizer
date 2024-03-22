@@ -139,7 +139,7 @@ def ReplaceLine(lines, regex, replacement_line):
 def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
     # get the preconfigured config from the same folder as the script
     default_config_path = Path(__file__).parent.resolve() / "cava_config"
-    tmp_config_path =  Path(__file__).parent.resolve() / "cava_tmp_config"
+    tmp_config_path =  tmp_dir.resolve() / "cava_tmp_config"
 
     # read default config
     with open(default_config_path, "r") as file:
