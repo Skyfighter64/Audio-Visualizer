@@ -92,6 +92,7 @@ def main():
                 # todo: does this work or does this need to be specifically hex?                
                 arduino.frame.colors.append(sample)
             # send led frame
+            print("sending next frame...")
             arduino.Send()
 
     print("Done.")
