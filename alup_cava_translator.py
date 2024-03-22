@@ -5,6 +5,7 @@ import shutil
 from pathlib import Path
 import tempfile
 import sys
+import re
 sys.path.insert(0,'Python-ALUP')
 # import the main library
 import importlib  
@@ -37,15 +38,18 @@ Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
 # also see: https://github.com/karlstav/cava/issues/123#issuecomment-307891020
 
 # path to the cava tmp folder
-TMP_DIRECTORY = tempfile.gettempdir() + "/cava"
+#TMP_DIRECTORY = tempfile.gettempdir() + "/cava" 
+TMP_DIRECTORY = Path("./tmp")
 # COM Port of the arduino
-COM_PORT = "COM9"
+# on windows: COMxx
+# on linux: /dev/ttyUSBx
+COM_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 115200
 # these values need to be the same as in the cava config
 # todo: automatically read from config file ? (see example)
-cava_config_path = "/home/pi/.config/cava/visualizer_config"
-bit_format = 8 # set sample size (8bit or 16bit) according to CAVA config
-bars = 10       # this should be automatically set to the number of leds reported by alup
+#cava_config_path = "/home/pi/.config/cava/visualizer_config"
+bit_format = 8  # set sample size (8bit or 16bit) according to CAVA config
+bars = 0        # this should be automatically set to the number of leds reported by alup
 
 # create ALUP Device
 arduino = Device()
@@ -57,22 +61,23 @@ def main():
     # ALUP connection status is currently untracked in python-alup (bruh)
 
     # create tmp folder if non-existent
-    Path(folder).mkdir(parents=False, exist_ok=True)
-    print("Made sure tmp folder at " + folder + " exists")
+    Path(TMP_DIRECTORY).mkdir(parents=False, exist_ok=True)
+    print("Made sure tmp folder at " + str(TMP_DIRECTORY.resolve()) + " exists")
     # clear tmp folder 
     #ClearDirectory(TMP_DIRECTORY) # temporarily disabled to do rm -rf concerns (high risks)
     # create temporary fifo
     fifo_path = CreateFifo(TMP_DIRECTORY)
-    print("Created fifo at " + fifo_path)
+    print("Created fifo at " + str(fifo_path.resolve()))
 
     # Create custom config 
     config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
-    print("Saved custom config to " + config_path)
+    print("Saved custom config to " + str(config_path.resolve()))
 
+    bars = arduino.configuration.ledCount
 
-    print("Running CAVA with config " + config_path)
+    print("Running CAVA with config " + str(config_path))
     # Start Cava with created config
-    cava_process = subprocess.Popen(["cava","-p", config_path])
+    cava_process = subprocess.Popen(["cava","-p", str(config_path.resolve())])
 
     print("Running visualizer...")
     # read from fifo file
@@ -105,7 +110,7 @@ def ClearDirectory(folder):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
     
 def CreateFifo(folder):    
-    fifo_path = folder + "/fifo"
+    fifo_path = folder / "fifo"
     # create fifo file if not exists
     if not os.path.exists(fifo_path):
         os.mkfifo(fifo_path)
@@ -133,8 +138,8 @@ def ReplaceLine(lines, regex, replacement_line):
 
 def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
     # get the preconfigured config from the same folder as the script
-    default_config_path = Path(__file__).parent.resolve() + "/cava_config"
-    tmp_config_path =  Path(__file__).parent.resolve() + "/cava_tmp_config"
+    default_config_path = Path(__file__).parent.resolve() / "cava_config"
+    tmp_config_path =  Path(__file__).parent.resolve() / "cava_tmp_config"
 
     # read default config
     with open(default_config_path, "r") as file:
@@ -143,11 +148,11 @@ def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
     # change bars to num_leds
     ReplaceLine(config_lines, regex = r"^ ?;? ?bars ?= ?[0-9]+ ?$", replacement_line = "bars = " + str(num_leds))
     # set fifo target file to fifo path
-    ReplaceLine(config_lines, regex = r"^ ?;? ?raw_target ?= ?.* ?$", replacement_line = "raw_target =" + str(fifo_path))
+    ReplaceLine(config_lines, regex = r"^ ?;? ?raw_target ?= ?.* ?$", replacement_line = "raw_target =" + str(fifo_path.resolve()))
     
     # paste into new custom config file
     with open(tmp_config_path, "w+") as output_file:
-        output_file.writelines(lines)
+        output_file.writelines(config_lines)
 
     # return path of custom config 
     return tmp_config_path
