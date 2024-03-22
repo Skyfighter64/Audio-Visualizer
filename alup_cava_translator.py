@@ -81,13 +81,19 @@ def main():
 
     print("Running visualizer...")
     # read from fifo file
+
+    # todo: this does currently not work as expected
+    # it should:
+    # - read <bars> bytes from the fifo and then send them to ALUP
+    # loop
     with open(fifo_path, mode="rb") as input_file:
         while(True):
             frame = Frame()
             # copy each bar from the fifo to the alup Device
             for i  in range(bars): 
-                # read next 8 bit from fifo
+                # read next sample from fifo
                 sample = input_file.read(int(bit_format/8))
+                print("Received sample " + str(sample))
                 # set color to led
                 # todo: does this work or does this need to be specifically hex?                
                 arduino.frame.colors.append(sample)
@@ -95,6 +101,8 @@ def main():
             print("sending next frame...")
             arduino.Send()
 
+    # cleanup
+    # todo: remove fifo
     print("Done.")
 
 
