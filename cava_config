@@ -22,7 +22,11 @@
 
 # The number of bars (0-512). 0 sets it to auto (fill up console).
 # Bars' width and space between bars in number of characters.
+
+# >>> this line is auto configured by the alup_cava_translator.py according to the ALUP config
 bars = 10
+
+
 ; bar_width = 2
 ; bar_spacing = 1
 # bar_height is only used for output in "noritake" format
@@ -82,6 +86,8 @@ bars = 10
 ; method = pipewire
 ; source = auto
 
+
+# >> DO NOT CHANGE THIS LINE FOR AUDIO-VISUALIZER TO WORK IF YOU'RE USING THE PROVIDED asound.conf
 method = alsa
 source = hw:Loopback,1
 
@@ -132,6 +138,9 @@ source = hw:Loopback,1
 # 'sdl_glsl' uses SDL to create an OpenGL context. Write your own shaders or
 # use one of the predefined ones.
 ; method = noncurses
+
+
+# >> DO NOT CHANGE THIS LINE FOR AUDIO-VISUALIZER TO WORK
 method = raw
 
 # Orientation of the visualization. Can be 'bottom', 'top', 'left' or 'right'.
@@ -150,12 +159,15 @@ mono_option = average
 reverse = 0
 
 # Raw output target. A fifo will be created if target does not exist.
+# >>> this line is auto configured by the alup_cava_translator.py 
 raw_target = /tmp/cava/fifo
 
 # Raw data format. Can be 'binary' or 'ascii'.
+# >> DO NOT CHANGE THIS LINE FOR AUDIO-VISUALIZER TO WORK
 data_format = binary
 
 # Binary bit format, can be '8bit' (0-255) or '16bit' (0-65530).
+# >> DO NOT CHANGE THIS LINE FOR AUDIO-VISUALIZER TO WORK
 bit_format = 8bit
 
 # Ascii max value. In 'ascii' mode range will run from 0 to value specified here
