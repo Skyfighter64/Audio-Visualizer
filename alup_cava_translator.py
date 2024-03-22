@@ -126,7 +126,7 @@ def ReplaceLine(lines, regex, replacement_line):
     
     print("Replaced " + str(occurences) + " line(s) with \"" + replacement_line + "\"")
 
-    if(occurences is 0):
+    if(occurences == 0):
         lines.append(replacement_line)
         print("No match found for regex \"" + str(regex) + "\". Appended line \"" + replacement_line + "\" at the end of file")
 
