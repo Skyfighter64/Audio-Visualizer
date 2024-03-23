@@ -89,7 +89,7 @@ bars = 0
 
 # >> DO NOT CHANGE THIS LINE FOR AUDIO-VISUALIZER TO WORK IF YOU'RE USING THE PROVIDED asound.conf
 method = alsa
-source = hw:Loopback,1
+source = loopout
 
 ; method = fifo
 ; source = /tmp/mpd.fifo

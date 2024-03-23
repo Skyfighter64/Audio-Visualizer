@@ -24,8 +24,30 @@ or
 # Setup
 
 ## CAVA
-todo: default config set input device
-also todo: set up loopback devices and custom cava configs 
+We need to edit the cava default configuration at `~/.config/cava/config` for the visualizer displayed in the commandline when calling `cava` without any arguments. (This is theoretically optional, but used later for testing the ALSA config. Only skip if you know what you're doing)
+- open `~/.config/cava/config`
+- in section [input] disable all input methods except `method = alsa`
+- set the source beneath to `source = loopout`
+It should look something like this:
+```
+...
+
+; method = pulse
+; source = auto
+
+; method = pipewire
+; source = auto
+
+method = alsa
+source = loopout
+
+; method = fifo
+; source = /tmp/mpd.fifo
+
+...
+
+```
+Everything else can be configured as you like.
 
 ## ALSA
 - Backup your current `/etc/asound.conf` config file
@@ -86,3 +108,7 @@ to: `ExecStart=/usr/bin/librespot --backend alsa --device pbnrec`
 
 ## Arduino / ALUP
 todo
+
+
+# Configuration
+todo: custom cava configs, multi instances, ...
