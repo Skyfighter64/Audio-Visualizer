@@ -102,13 +102,15 @@ def main():
                 # send led frame
                 #print("sending next frame...")
                 arduino.Send()
-        except(Exception e):
-            print(e)
+        except:
+            #cleanup
+            print("An exception occured")
+            print("Cleaning up...")
             # remove fifo 
+            print("Deleting FIFO at " + str(fifo_path.resolve()))
             os.remove(fifo_path) 
-
-    # cleanup
-    # todo: remove fifo
+            print("Disconnecting ALUP...")
+            arduino.Disconnect()
     print("Done.")
 
 
