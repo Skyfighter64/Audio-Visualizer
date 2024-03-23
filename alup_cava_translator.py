@@ -87,6 +87,7 @@ def main():
     # - read <bars> bytes from the fifo and then send them to ALUP
     # loop
     with open(fifo_path, mode="rb") as input_file:
+        print("a")
         while(True):
             frame = Frame()
             # copy each bar from the fifo to the alup Device
@@ -96,7 +97,7 @@ def main():
                 print("Received sample " + str(sample))
                 # set color to led
                 # todo: does this work or does this need to be specifically hex?                
-                arduino.frame.colors.append(sample)
+                #arduino.frame.colors.append(sample)
             # send led frame
             print("sending next frame...")
             arduino.Send()
@@ -133,9 +134,9 @@ def CreateFifo(folder):
 def ReplaceLine(lines, regex, replacement_line):
     pattern = re.compile(regex, re.MULTILINE)
     occurences = 0
-    for line in lines:
-        if pattern.match(line):
-            line = replacement_line
+    for i in range(len(lines)):
+        if pattern.match(lines[i]):
+            lines[i] = replacement_line
             occurences += 1
     
     print("Replaced " + str(occurences) + " line(s) with \"" + replacement_line + "\"")
@@ -157,7 +158,7 @@ def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
     # change bars to num_leds
     ReplaceLine(config_lines, regex = r"^ ?;? ?bars ?= ?[0-9]+ ?$", replacement_line = "bars = " + str(num_leds))
     # set fifo target file to fifo path
-    ReplaceLine(config_lines, regex = r"^ ?;? ?raw_target ?= ?.* ?$", replacement_line = "raw_target =" + str(fifo_path.resolve()))
+    ReplaceLine(config_lines, regex = r"^ ?;? ?raw_target ?= ?.* ?$", replacement_line = "raw_target = " + str(fifo_path.resolve()))
     
     # paste into new custom config file
     with open(tmp_config_path, "w+") as output_file:

@@ -24,7 +24,7 @@
 # Bars' width and space between bars in number of characters.
 
 # >>> this line is auto configured by the alup_cava_translator.py according to the ALUP config
-bars = 10
+bars = 0
 
 
 ; bar_width = 2
