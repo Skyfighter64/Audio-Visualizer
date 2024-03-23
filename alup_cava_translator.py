@@ -87,21 +87,25 @@ def main():
     # - read <bars> bytes from the fifo and then send them to ALUP
     # loop
     with open(fifo_path, mode="rb") as input_file:
-        print("a")
-        while(True):
-            frame = Frame()
-            # copy each bar from the fifo to the alup Device
-            for i  in range(bars): 
-                # read next sample from fifo
-                bytes_sample = input_file.read(int(bit_format/8))
-                sample = int.from_bytes(bytes_sample, "little", signed=False)
-                #print("Received sample " + str(sample))
-                # set color to led
-                # todo: does this work or does this need to be specifically hex?                
-                arduino.frame.colors.append(sample)
-            # send led frame
-            #print("sending next frame...")
-            arduino.Send()
+        try:
+            while(True):
+                frame = Frame()
+                # copy each bar from the fifo to the alup Device
+                for i  in range(bars): 
+                    # read next sample from fifo
+                    bytes_sample = input_file.read(int(bit_format/8))
+                    sample = int.from_bytes(bytes_sample, "little", signed=False)
+                    #print("Received sample " + str(sample))
+                    # set color to led
+                    # todo: does this work or does this need to be specifically hex?                
+                    arduino.frame.colors.append(sample)
+                # send led frame
+                #print("sending next frame...")
+                arduino.Send()
+        except(Exception e):
+            print(e)
+            # remove fifo 
+            os.remove(fifo_path) 
 
     # cleanup
     # todo: remove fifo
