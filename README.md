@@ -2,10 +2,16 @@
 An audio visualizer for my Raspberry Pi which combines Addressable LEDs and the [CAVA Audio Visualizer](https://github.com/karlstav/cava) by using an Arduino with [ALUP](https://github.com/Skyfighter64/ALUP) and a custom ALSA Configuration.
 
 # Requirements
+- Spotify Premium access (?)
 - Raspberry Pi to play Audio (any other linux system will probably work)
 - [CAVA Audio Visualizer](https://github.com/karlstav/cava)
 - Audio Loopback device enabled (usually via `sudo modprobe snd-aloop`)
 - Arduino connected via USB and [Arduino-ALUP](https://github.com/Skyfighter64/Arduino-ALUP) configured and running
+
+## A note on spotify premium and alternative audio sources
+In order to use spotify connect to stream to Raspotify, a Spotify Premium account is required.
+If you want to stream from other audio sources, it is also possible (like bluetooth devices or Raspberry Pi system sounds). However, this setup does not include how to set those up. If you do, just make sure to set the audio device of the other programs to `pbnrec` in their respective configuration and ignore the Raspotify section. Everything else should stay the same.
+
 
 # Install
 Use this to clone the repo and also clone the [Python-ALUP](https://github.com/Skyfighter64/Python-ALUP) submodule
@@ -15,6 +21,68 @@ or
 `cd Audio-Visualizer`
 `git submodule update --init`
 
-# Configuration
+# Setup
+
+## CAVA
+todo: default config set input device
+also todo: set up loopback devices and custom cava configs 
+
+## ALSA
+- Backup your current `/etc/asound.conf` config file
+- Copy the provided asound.conf to `/etc/asound.conf`
+- Open the file in a text editor navigate to:
+```
+ctl.usbSound
+{
+    type plug;
+    slave.pcm plughw:Device;
+}
+
+# redirect to usb soundcard (without additional plug)
+# this is needed for the pbnrec plug which conflicts if two plugs (pbnrec, usbSound) are used in the same stream
+pcm._usbSound
+{
+    type empty;
+    slave.pcm plughw:Device;
+}
+```
+Change `plughw:Device;` to the name of your desired audio output device. (All devices can be listed with `aplay -l`)  
+
+## Audio Loopback
+Start the audio loopback kernel module
+`sudo modprobe snd-aloop`
+You will now see loopback devices when running `aplay -l`
+This needs to be done every time the system reboots. To load this module automatically:
+- open `/etc/modules-load.d/modules.conf`
+- add `snd-aloop` to the bottom of the file 
+
+
+## Test your ALSA setup
+You can now test if your audio setup is working correctly
+- run `cava` in your terminal (this uses the default config at `~/.config/cava/config`)
+- Warning: The next step will play audio, adjust your device volumes to appropriate leves beforehand.
+- in another terminal, run `aplay /usr/share/sounds/alsa/Front_Center.wav --device=pbnrec` to play a test audio file
+-> You should now hear the audio on your speakers AND `cava` react to the audio.
+-> If not, something is not set up correctly. Check your config files and make sure the loopback devices are running
+### Troubleshooting:
+- Use `aplay /usr/share/sounds/alsa/Front_Center.wav --device=usbSound` to to test only your speakers. If you can't hear anything, see the ALSA setup again on how to set the correct sound card for output.
+- If cava is not responding to the sounds:
+    - try changing the cava sensitivity and number of bars by using the arrow keys 
+    - make sure loopback devices are shown when running `aplay -l`. See Audio Loopback setup
+    - see the CAVA setup section again on how to set the audio input for CAVA
+
+
+## Raspotify
+We need to set the output of raspotify to the `pbnrec` device created previously in asound.conf:
+- Change the `ExecStart` parameter in `/usr/lib/systemd/system/raspotify.service`
+to: `ExecStart=/usr/bin/librespot --backend alsa --device pbnrec`
+- save and restart raspotify (`sudo systemctl restart raspotify`)
+(It might also work to set it in the config at `/etc/raspotify/conf`)
+
+### Testing Raspotify
+- You should now be able to connect to `Raspotify` inside your spotify app on your phone or computer.
+- If you play any song while connected, you should now hear it over your speakers and see the visualizer doing its thing when running `cava` in your terminal.
+
+
+## Arduino / ALUP
 todo
-also todo: make setup guide to set up alsa config, soundcards, loopback devices and custom cava configs 
