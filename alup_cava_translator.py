@@ -108,8 +108,10 @@ def main():
             print("Cleaning up...")
             # remove fifo 
             print("Deleting FIFO at " + str(fifo_path.resolve()))
-            os.remove(fifo_path) 
+            os.remove(fifo_path)
             print("Disconnecting ALUP...")
+            arduino.SetCommand(Command.CLEAR)
+            arduino.Send()
             arduino.Disconnect()
     print("Done.")
 
