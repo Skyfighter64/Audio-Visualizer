@@ -107,9 +107,9 @@ def main():
                 # send led frame
                 #print("sending next frame...")
                 arduino.Send()
-        except:
+        except KeyboardInterrupt as e:
             #cleanup
-            print("An exception occured")
+            print("Ctl-C pressed")
             print("Cleaning up...")
             # remove fifo 
             print("Deleting FIFO at " + str(fifo_path.resolve()))
@@ -142,7 +142,7 @@ def RainbowColor(i):
 #                Note: no need to apply the visualizer effects here, this is done in 'AdjustBrightness(...)'
 # returns a 24bit color value in the format 0xrrggbb
 def Effect(currentLed, ledCount, sample):
-    return RainbowColor(currentLed)
+    return RainbowColor(currentLed/ledCount)
 
 
 # returns the given 24bit color with the given 8 bit brightness
