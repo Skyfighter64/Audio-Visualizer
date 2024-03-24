@@ -31,11 +31,9 @@ Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
 
 
 # future goals:
-# multiple devices / multiple instances
+# custom configuration (cmdline argument)
 # different effects 
-# udp/wifi support
 
-# also see: https://github.com/karlstav/cava/issues/123#issuecomment-307891020
 
 # path to the cava tmp folder
 #TMP_DIRECTORY = tempfile.gettempdir() + "/cava" 
@@ -55,7 +53,7 @@ bars = 0        # this should be automatically set to the number of leds reporte
 arduino = Device()
 
 def main():
-    print("Connecting to Serial ALUP at %s, %d", (COM_PORT, BAUD_RATE))
+    print("Connecting to Serial ALUP at %s, %d" % (COM_PORT, BAUD_RATE))
     # Connect to ALUP
     arduino.SerialConnect(COM_PORT, BAUD_RATE)
     # ALUP connection status is currently untracked in python-alup (bruh)
@@ -175,28 +173,6 @@ def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
 
     # return path of custom config 
     return tmp_config_path
-
-
-"""      
-# clear terminal 
-    os.system('clear')
-
-    # read from fifo file
-    with open(fifo_path, mode="rb") as input_file:
-        while(True):
-            #os.system('clear')
-            print("\033[3J\033[H", end="")
-            print("Next Frame:")
-            for i  in range(bars): 
-                sample = input_file.read(int(bit_format/8))
-                drawBar(int.from_bytes(sample, byteorder="big", signed=False))
-                #print(sample)
-
-def drawBar(value):
-    #print(value)
-    print("=" + ("=" * (value//20)) + (" " * ((255-value)//20)))
- """       
-
 
 
 if __name__ == "__main__":
