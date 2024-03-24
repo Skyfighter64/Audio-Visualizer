@@ -94,8 +94,12 @@ def main():
                     bytes_sample = input_file.read(int(bit_format/8))
                     sample = int.from_bytes(bytes_sample, "little", signed=False)
                     #print("Received sample " + str(sample))
-                    # temporary test color effect
-                    color = sample << (8 * (i % 3))      
+
+                    # ---------- plan for effects: ---------------
+                    # add variable effect function generating array of 24bit color values for leds
+
+                    # add visualizer function to change brightness of each 8bit led color depeding on visualizer
+    
                     # set color to led       
                     arduino.frame.colors.append(color)
                 # send led frame
