@@ -94,9 +94,10 @@ def main():
                     bytes_sample = input_file.read(int(bit_format/8))
                     sample = int.from_bytes(bytes_sample, "little", signed=False)
                     #print("Received sample " + str(sample))
-                    # set color to led
-                    # todo: does this work or does this need to be specifically hex?                
-                    arduino.frame.colors.append(sample)
+                    # temporary test color effect
+                    color = sample << (8 * (i % 3))      
+                    # set color to led       
+                    arduino.frame.colors.append(color)
                 # send led frame
                 #print("sending next frame...")
                 arduino.Send()
