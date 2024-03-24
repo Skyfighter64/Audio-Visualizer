@@ -101,9 +101,9 @@ def main():
                     # add variable effect function generating array of 24bit color values for leds
                     color = Effect(i, arduino.configuration.ledCount, sample)
                     # add visualizer function to change brightness of each 8bit led color depeding on visualizer
-                    color = AdjustBrightness(color)
+                    color = AdjustBrightness(color, sample)
                     # set color to led  (colors are stored together in 24bit int as 0xrrggbb)     
-                    arduino.frame.colors.append(color, sample)
+                    arduino.frame.colors.append(color)
                 # send led frame
                 #print("sending next frame...")
                 arduino.Send()
