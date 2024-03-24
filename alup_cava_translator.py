@@ -4,6 +4,7 @@ import sys
 import shutil
 import colorsys
 import subprocess
+import argparse
 from pathlib import Path
 
 
@@ -36,7 +37,6 @@ Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
 # custom configuration (cmdline argument)
 # different effects 
 
-
 # path to the cava tmp folder
 #TMP_DIRECTORY = tempfile.gettempdir() + "/cava" 
 TMP_DIRECTORY = Path("./tmp")
@@ -45,6 +45,15 @@ TMP_DIRECTORY = Path("./tmp")
 # on linux: /dev/ttyUSBx
 COM_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 115200
+
+parser = argparse.ArgumentParser(prog='ALUP Audio Visualizer',
+                                 description='Audio Visualization for addressable LEDs using CAVA and ALUP')
+
+parser.add_argument('-c', '--config', action='store', nargs=1, type=Path, help="Specify a custom CAVA configuration to use for visualization.\nIf not set, a copy of the configuration at %s will be generated to the tmp folder and automatically adjusted" % ((Path(__file__).parent.resolve() / "cava_config").resolve()))
+parser.add_argument('-t', '--tmp', action='store', nargs=1, type=Path, help="Specify a tmp directory to store temporary files in. Default is %s" % (TMP_DIRECTORY.resolve()))
+
+
+
 # these values need to be the same as in the cava config
 # todo: automatically read from config file ? (see example)
 #cava_config_path = "/home/pi/.config/cava/visualizer_config"
@@ -55,6 +64,12 @@ bars = 0        # this should be automatically set to the number of leds reporte
 arduino = Device()
 
 def main():
+    # parse cmdline arguments
+    args = parser.parse_args()
+    if (not args.tmp is None):
+        TMP_DIRECTORY = args.tmp
+    
+
     print("Connecting to Serial ALUP at %s, %d" % (COM_PORT, BAUD_RATE))
     # Connect to ALUP
     arduino.SerialConnect(COM_PORT, BAUD_RATE)
@@ -69,8 +84,11 @@ def main():
     fifo_path = CreateFifo(TMP_DIRECTORY)
     print("Created fifo at " + str(fifo_path.resolve()))
 
-    # Create custom config 
-    config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
+    # Create custom temporary config if needed
+    config_path = args.config
+    if(args.config is None):
+        config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
+
     print("Saved custom config to " + str(config_path.resolve()))
 
     bars = arduino.configuration.ledCount

@@ -1,2 +1,4 @@
 # ignore old legacy file
 alup_cava_translation_layer.py
+/tmp
+log.txt
