@@ -1,14 +1,15 @@
-import subprocess
-import time
 import os
-import shutil
-from pathlib import Path
-import tempfile
-import sys
 import re
+import sys
+import shutil
+import colorsys
+import subprocess
+from pathlib import Path
+
+
 sys.path.insert(0,'Python-ALUP')
-# import the main library
 import importlib  
+# import the main ALUP library
 Device = getattr(importlib.import_module("Python-ALUP.src.Device"), "Device")
 #from Python-ALUP.src.Device import Device
 # import command definitions
@@ -16,8 +17,9 @@ Command = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Command")
 #from Python-ALUP.src.Frame import Command
 #from Python-ALUP.src.Frame import Frame
 Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
-# note: make sure, alsa is configured accordingly and loopback devices are active
 
+
+# note: make sure, alsa is configured accordingly and loopback devices are active
 
 ###############################
 # Plan:
@@ -97,11 +99,11 @@ def main():
 
                     # ---------- plan for effects: ---------------
                     # add variable effect function generating array of 24bit color values for leds
-
+                    color = Effect(i, arduino.configuration.ledCount, sample)
                     # add visualizer function to change brightness of each 8bit led color depeding on visualizer
-    
-                    # set color to led       
-                    arduino.frame.colors.append(color)
+                    color = AdjustBrightness(color)
+                    # set color to led  (colors are stored together in 24bit int as 0xrrggbb)     
+                    arduino.frame.colors.append(color, sample)
                 # send led frame
                 #print("sending next frame...")
                 arduino.Send()
@@ -118,6 +120,51 @@ def main():
             arduino.Disconnect()
     print("Done.")
 
+
+# geneate a rainbow color
+# @param i: the hue for the geneated color, in range [0.0, 1.0]
+# @return: the 24bit hsv color
+def RainbowColor(i):
+    # get hsv color as rgb array
+    color_array = colorsys.hsv_to_rgb(i, 1.0, 1.0)
+    # scale array to range [0,255] and combine to hex color
+    color = int(color_array[0] * 255)
+    color = color << 8
+    color += int(color_array[1] * 255)
+    color = color << 8
+    color += int(color_array[2])
+    return color
+
+# effect applied to the leds with all values which might be useful to generate an effect
+# @param currentLed: the index of the led this color will correspond to
+# @param ledCount: the total number of Leds
+# @param sample: the current visualizer sample 
+#                Note: no need to apply the visualizer effects here, this is done in 'AdjustBrightness(...)'
+# returns a 24bit color value in the format 0xrrggbb
+def Effect(currentLed, ledCount, sample):
+    return RainbowColor(currentLed)
+
+
+# returns the given 24bit color with the given 8 bit brightness
+def AdjustBrightness(color, brightness):
+    # extract the different base colors from the 24bit color
+    # using bitshifts and a bitmask
+    r = (color >> 16) & 0xFF
+    g = (color >> 8) & 0xFF
+    b = color & 0xFF
+    # scale colors according to brightness
+    r = int(r * brightness/255.0)
+    g = int(g * brightness/255.0)
+    b = int(b * brightness/255.0)
+    # reassemble as 24bit color
+    color = r
+    color = color << 8
+    color += g
+    color = color << 8
+    color += b
+    return color
+
+    
 
 # remove all contents in directory recursively
 def ClearDirectory(folder):
