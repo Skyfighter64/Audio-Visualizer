@@ -116,7 +116,7 @@ to: `ExecStart=/usr/bin/librespot --backend alsa --device pbnrec`
 (It might also work to set it in the config at `/etc/raspotify/conf`)
 
 ## Other audio sources
-It is possible to use other sources of audio (eg. Bluetooth / Browser / System Sounds / other music player), which need to be configured separately.
+It is possible to use other sources of audio (eg. Bluetooth / Browser / System Sounds / other music player / Microphone (?)), which need to be configured separately.
 
 If you are using another source than Raspotify for playing audio, make sure to set the input method to use alsa and the output device to `pbnrec` ("playback and record").
 

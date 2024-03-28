@@ -34,8 +34,9 @@ Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
 
 
 # future goals:
-# custom configuration (cmdline argument)
+# custom configuration (cmdline argument) todo: test and fix
 # different effects 
+# import custom effects from external effects python file
 
 # path to the cava tmp folder
 #TMP_DIRECTORY = tempfile.gettempdir() + "/cava" 
@@ -49,9 +50,13 @@ BAUD_RATE = 115200
 parser = argparse.ArgumentParser(prog='ALUP Audio Visualizer',
                                  description='Audio Visualization for addressable LEDs using CAVA and ALUP')
 
+# todo: implement args:
 parser.add_argument('-c', '--config', action='store', nargs=1, type=Path, help="Specify a custom CAVA configuration to use for visualization.\nIf not set, a copy of the configuration at %s will be generated to the tmp folder and automatically adjusted" % ((Path(__file__).parent.resolve() / "cava_config").resolve()))
 parser.add_argument('-t', '--tmp', action='store', nargs=1, type=Path, help="Specify a tmp directory to store temporary files in. Default is %s" % (TMP_DIRECTORY.resolve()))
-
+parser.add_argument('-C', '--com_port', action='store', nargs=1, help="Specify the COM port where the Arduino Serial is connected.\nIf not set, %s will be used" % (COM_PORT))
+parser.add_argument('-b', '--baud', action='store', nargs=1, type=int, help="Specify the baud rate of the Arduino Serial connection.\nIf not set, %d will be used" % (BAUD_RATE))
+# future feature
+#parser.add_argument('-e', '--effect', action='store', nargs=1, type=Path, help="Specify a custom effects python file.\nIf not set, %s will be used" % (BAUD_RATE))
 
 
 # these values need to be the same as in the cava config
@@ -64,11 +69,24 @@ bars = 0        # this should be automatically set to the number of leds reporte
 arduino = Device()
 
 def main():
+    global TMP_DIRECTORY
+    global COM_PORT
+    global BAUD_RATE
+
+    # todo: maybe write defaults into parser arguments instead?
+    # this would obsolete those checks
     # parse cmdline arguments
     args = parser.parse_args()
+    # update tmp directory path if cmdline arg is given
     if (not args.tmp is None):
         TMP_DIRECTORY = args.tmp
-    
+        print("Using custom tmp directory: " + str(TMP_DIRECTORY.resolve()))
+    if (not args.com_port is None):
+        COM_PORT = args.com_port
+        print("Using custom COM Port: " + str(COM_PORT))
+    if (not args.baud is None):
+        BAUD_RATE = args.baud
+        print("Using custom Baud Rate: " + str(BAUD_RATE))
 
     print("Connecting to Serial ALUP at %s, %d" % (COM_PORT, BAUD_RATE))
     # Connect to ALUP
