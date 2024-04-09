@@ -17,9 +17,9 @@ However, this setup does currently only include a guide for Raspotify. If you wa
 
 # Install
 Use this to clone the repo and also clone the [Python-ALUP](https://github.com/Skyfighter64/Python-ALUP) submodule:\
-`git clone --recurse-submodules https://github.com/Skyfighter64/Audio-Visualizer`\
+`git clone --recurse-submodules https://github.com/Skyfighter64/Audio-Visualizer.git`\
 or
-- `git clone https://github.com/Skyfighter64/Audio-Visualizer`
+- `git clone https://github.com/Skyfighter64/Audio-Visualizer.git`
 - `cd Audio-Visualizer`
 - `git submodule update --init`
 
