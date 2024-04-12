@@ -103,11 +103,12 @@ def main():
     print("Created fifo at " + str(fifo_path.resolve()))
 
     # Create custom temporary config if needed
-    config_path = args.config
+    config_path = args.config[0]
     if(args.config is None):
         config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
-
-    print("Saved custom config to " + str(config_path.resolve()))
+        print("Saved custom config to " + str(config_path.resolve()))
+    else:
+        print("Using custom config: "+ str(config_path))
 
     bars = arduino.configuration.ledCount
 
@@ -131,7 +132,7 @@ def main():
                     # read next sample from fifo
                     bytes_sample = input_file.read(int(bit_format/8))
                     sample = int.from_bytes(bytes_sample, "little", signed=False)
-                    #print("Received sample " + str(sample))
+                    print("Received sample " + str(sample))
 
                     # ---------- plan for effects: ---------------
                     # add variable effect function generating array of 24bit color values for leds
