@@ -132,6 +132,7 @@ def main():
                     # read next sample from fifo
                     bytes_sample = input_file.read(int(bit_format/8))
                     sample = int.from_bytes(bytes_sample, "little", signed=False)
+
                     #print("Received sample " + str(sample))
 
                     # ---------- plan for effects: ---------------
@@ -143,6 +144,7 @@ def main():
                     arduino.frame.colors.append(color)
                 # send led frame
                 #print("sending next frame...")
+                # todo: this is hanging with more than 10 leds 
                 arduino.Send()
         except KeyboardInterrupt as e:
             #cleanup
