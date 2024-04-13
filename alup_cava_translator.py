@@ -107,8 +107,8 @@ def main():
         config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
         print("Saved custom config to " + str(config_path.resolve()))
     else:
-        print("Using custom config: "+ str(config_path))
         config_path = args.config[0]
+        print("Using custom config: "+ str(config_path))
 
     bars = arduino.configuration.ledCount
 
@@ -171,7 +171,7 @@ def RainbowColor(i):
     color = color << 8
     color += int(color_array[1] * 255)
     color = color << 8
-    color += int(color_array[2])
+    color += int(color_array[2] * 255)
     return color
 
 # effect applied to the leds with all values which might be useful to generate an effect
