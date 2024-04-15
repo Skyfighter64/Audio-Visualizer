@@ -116,7 +116,8 @@ def main():
     config = configparser.ConfigParser()
     config.read(config_path)
     ConfigureCAVA(config, arduino, fifo_path)
-    config.write(modified_config_path)
+    with open(modified_config_path) as modified_config_file:
+        config.write(modified_config_file)
 
     print("Saved modified config to " + str(modified_config_path.resolve()))
 
