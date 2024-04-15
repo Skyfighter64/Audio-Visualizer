@@ -6,6 +6,7 @@ import colorsys
 import subprocess
 import argparse
 from pathlib import Path
+import configparser
 
 
 sys.path.insert(0,'Python-ALUP')
@@ -102,13 +103,23 @@ def main():
     fifo_path = CreateFifo(TMP_DIRECTORY)
     print("Created fifo at " + str(fifo_path.resolve()))
 
-    # Create custom temporary config if needed
-    if(args.config is None):
-        config_path = CreateCavaConfig(arduino.configuration.ledCount, TMP_DIRECTORY, fifo_path)
-        print("Saved custom config to " + str(config_path.resolve()))
-    else:
+   
+    # read in config cmdline argument if present
+    config_path = Path(__file__).parent.resolve() / "cava_config"
+    modified_config_path =  TMP_DIRECTORY.resolve() / "cava_tmp_config"
+
+    if(not args.config is None):
         config_path = args.config[0]
         print("Using custom config: "+ str(config_path))
+
+    # customize the CAVA configuration
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    ConfigureCAVA(config, arduino, fifo_path)
+    config.write(modified_config_path)
+
+    print("Saved modified config to " + str(modified_config_path.resolve()))
+
 
     bars = arduino.configuration.ledCount
 
@@ -226,44 +237,20 @@ def CreateFifo(folder):
     return fifo_path
 
 
-# replace the first occurence of the matching regex with the contents of replacement_line
-# in the given array of strings or appends it to the end if no match is found
-# returns the number of replaced lines
-def ReplaceLine(lines, regex, replacement_line):
-    pattern = re.compile(regex, re.MULTILINE)
-    occurences = 0
-    for i in range(len(lines)):
-        if pattern.match(lines[i]):
-            lines[i] = replacement_line
-            occurences += 1
-    
-    print("Replaced " + str(occurences) + " line(s) with \"" + replacement_line + "\"")
+# modify the given CAVA configuration to work with the visualizer
+# @param config: the configparser object containing the CAVA config
+# @param device: the ALUP device
+# @param fifo_path: the path to the fifo file
+# @return the modified config
+def ConfigureCAVA(config, device, fifo_path):
+    print('Setting output method to raw')
+    config['output']['method'] = 'raw'
+    print('Setting number of bars to %d' % (device.configuration.ledCount))
+    config['general']['bars'] = str(device.configuration.ledCount)
+    print('Setting raw output target to %s' % (str(fifo_path.resolve())))
+    config['output']['raw_target'] = str(fifo_path.resolve())
+    return config
 
-    if(occurences == 0):
-        lines.append(replacement_line)
-        print("No match found for regex \"" + str(regex) + "\". Appended line \"" + replacement_line + "\" at the end of file")
-
-
-def CreateCavaConfig(num_leds, tmp_dir, fifo_path):
-    # get the preconfigured config from the same folder as the script
-    default_config_path = Path(__file__).parent.resolve() / "cava_config"
-    tmp_config_path =  tmp_dir.resolve() / "cava_tmp_config"
-
-    # read default config
-    with open(default_config_path, "r") as file:
-        config_lines = file.readlines()
-
-    # change bars to num_leds
-    ReplaceLine(config_lines, regex = r"^ ?;? ?bars ?= ?[0-9]+ ?$", replacement_line = "bars = " + str(num_leds))
-    # set fifo target file to fifo path
-    ReplaceLine(config_lines, regex = r"^ ?;? ?raw_target ?= ?.* ?$", replacement_line = "raw_target = " + str(fifo_path.resolve()))
-    
-    # paste into new custom config file
-    with open(tmp_config_path, "w+") as output_file:
-        output_file.writelines(config_lines)
-
-    # return path of custom config 
-    return tmp_config_path
 
 
 if __name__ == "__main__":
