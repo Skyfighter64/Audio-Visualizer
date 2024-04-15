@@ -124,9 +124,9 @@ def main():
 
     bars = arduino.configuration.ledCount
 
-    print("Running CAVA with config " + str(config_path))
+    print("Running CAVA with config " + str(modified_config_path))
     # Start Cava with created config
-    cava_process = subprocess.Popen(["cava","-p", str(config_path.resolve())])
+    cava_process = subprocess.Popen(["cava","-p", str(modified_config_path.resolve())])
 
     print("Running visualizer...")
     # read from fifo file
