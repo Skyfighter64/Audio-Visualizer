@@ -132,4 +132,12 @@ todo
 
 
 # Configuration
+The audio visualizer overrides the following parameters of the specified CAVA configuration in order to work properly:
+```
+[general]
+bars = <alup led count>
+[output]
+ method = raw
+ raw_target = <path to fifo>
+```
 todo: custom cava configs, multi instances, ...
