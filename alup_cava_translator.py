@@ -205,7 +205,7 @@ def AdjustBrightness(color, brightness):
     g = (color >> 8) & 0xFF
     b = color & 0xFF
 
-    brightness = Delinearize(brightness)
+    #brightness = Delinearize(brightness)
 
     # scale colors according to brightness
     r = int(r * brightness/255.0)
