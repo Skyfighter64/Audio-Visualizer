@@ -203,6 +203,9 @@ def AdjustBrightness(color, brightness):
     r = (color >> 16) & 0xFF
     g = (color >> 8) & 0xFF
     b = color & 0xFF
+
+    brightness = Delinearize(brightness)
+
     # scale colors according to brightness
     r = int(r * brightness/255.0)
     g = int(g * brightness/255.0)
@@ -215,6 +218,13 @@ def AdjustBrightness(color, brightness):
     color += b
     return color
 
+# square the given brightness for usage with 
+# real leds; this is a direct consequence of the way
+# humans perceive light
+# @param brightness: the brightness integer value as [0-255]
+# @return: the delinarized and resized brightness interger [0-255]
+def Delinearize(brightness):
+    return pow(brightness, 2) / 255
     
 
 # remove all contents in directory recursively
