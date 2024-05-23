@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import math
 import shutil
 import colorsys
 import subprocess
@@ -224,7 +225,8 @@ def AdjustBrightness(color, brightness):
 # @param brightness: the brightness integer value as [0-255]
 # @return: the delinarized and resized brightness interger [0-255]
 def Delinearize(brightness):
-    return pow(brightness, 2) / 255
+    #return pow(brightness, 2) / 255
+    return math.sqrt(brightness* 255)
     
 
 # remove all contents in directory recursively
