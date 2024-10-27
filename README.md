@@ -1,6 +1,10 @@
 # Audio-Visualizer
 An audio visualizer for my Raspberry Pi which combines Addressable LEDs and the [CAVA Audio Visualizer](https://github.com/karlstav/cava) by using an Arduino with [ALUP](https://github.com/Skyfighter64/ALUP) and a custom ALSA Configuration.
 
+
+# Demo
+https://www.youtube.com/watch?v=3TDKFBB37Sk
+
 # Requirements
 - Spotify Premium access
 - Raspberry Pi to play Audio (any other linux system will probably work)
