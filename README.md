@@ -3,7 +3,8 @@ An audio visualizer for my Raspberry Pi which combines Addressable LEDs and the 
 
 
 # Demo
-https://www.youtube.com/watch?v=3TDKFBB37Sk
+Sorry for the bad quality :>
+https://www.youtube.com/watch?v=6K1Sigc1xIU
 
 # Requirements
 - Spotify Premium access
