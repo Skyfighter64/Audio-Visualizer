@@ -39,7 +39,7 @@ We need to edit the cava default configuration at `~/.config/cava/config` for th
 It should look something like this:
 ```
 ...
-
+[input]
 ; method = pulse
 ; source = auto
 
@@ -57,6 +57,7 @@ source = loopout
 
 ```
 Everything else can be configured as you like.
+A default config file with all possible parameters can be found here: https://github.com/karlstav/cava/blob/master/example_files/config
 
 ## ALSA
 - Backup your current `/etc/asound.conf` config file
@@ -113,23 +114,62 @@ If not, something is not set up correctly. Check your config files and make sure
     - see the CAVA setup section again on how to set the audio input for CAVA
 
 
-## Raspotify
+---------------------------------------------------
+# Play Music 
+There are different ways to play music. In general, any audio source can be used as long as its audio output is set to the `pbnrec` ALSA audio device. If you want all audio to be visualized, you may also just declare `pbnrec` as a slave of the default device in your `asound.conf` as follows:
+
+```
+pcm.!default 
+{   
+    type plug;
+    #slave.pcm _usbSound; # usb soundcard as default output
+    slave.pcm pbnrec;	# pbnrec as default output
+}
+```
+
+Here are some of my favorite ways to play audio:
+
+## RPI Audio Receiver:
+This is the easiest way to get Raspotify, Bluetooth Audio and AirPlay 2 on your Raspberrry Pi (needs latest Raspberry Pi OS)
+
+https://github.com/nicokaiser/rpi-audio-receiver
+
+Use the installer script to set up the different methods, then follow the guides below for every installed method to change the audio device to the right output.
+
+### Configure Raspotify
 We need to set the output of raspotify to the `pbnrec` device created previously in asound.conf:
 - Change the `ExecStart` parameter in `/usr/lib/systemd/system/raspotify.service`
 to: `ExecStart=/usr/bin/librespot --backend alsa --device pbnrec`
 - save and restart raspotify (`sudo systemctl restart raspotify`)
 (It might also work to set it in the config at `/etc/raspotify/conf`)
 
-## Other audio sources
-It is possible to use other sources of audio (eg. Bluetooth / Browser / System Sounds / other music player / Microphone (?)), which need to be configured separately.
+#### Testing Raspotify
+- You should now be able to connect to `Raspotify` inside your spotify app on your phone or computer.
+- If you play any song while connected, you should now hear it over your speakers and see the visualizer doing its thing when running `cava` in your terminal.
+
+
+### Configure Bluez-aplay
+This bluetooth audio player plays anything sent from connected bluetooth devices.
+To configure the output, edit the systemd file for the `bluealsa-aplay` service:
+- use `sudo systemctl edit bluealsa-aplay.service`, and paste in the following lines:
+```
+### Editing /etc/systemd/system/bluealsa-aplay.service.d/override.conf
+### Anything between here and the comment below will become the new contents of the file
+
+# $ sudo systemctl edit bluealsa-aplay
+[Service]
+ExecStart=
+ExecStart=/usr/bin/bluealsa-aplay --pcm=pbnrec
+
+### Lines below this comment will be discarded
+```
+
+### Other audio sources
+As said, is possible to use other sources of audio (eg. Bluetooth / Browser / System Sounds / other music player / Microphone (?)), which need to be configured separately.
 
 If you are using another source than Raspotify for playing audio, make sure to set the input method to use alsa and the output device to `pbnrec` ("playback and record").
 
-If this is not an option, you can also try setting the `pbnrec` as default sink in `/etc/asound.conf`. This will output all sounds which have no special output configured to the visualizer and your configured sound card.
-
-### Testing Raspotify
-- You should now be able to connect to `Raspotify` inside your spotify app on your phone or computer.
-- If you play any song while connected, you should now hear it over your speakers and see the visualizer doing its thing when running `cava` in your terminal.
+If this is not an option, you can also try setting the `pbnrec` as default sink in `/etc/asound.conf` as described earlier. This will output all sounds which have no special output configured to the visualizer and your configured sound card.
 
 
 ## Arduino / ALUP
