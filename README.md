@@ -29,7 +29,8 @@ or
 - `git submodule update --init`
 
 # Setup
-This section explains how to set up the different components needed.
+This section explains how to set up the different components needed so audio coming from different sources
+can be visualized while playing to speakers.
 ## CAVA
 We need to edit the cava default configuration at `~/.config/cava/config` for the visualizer displayed in the commandline when calling `cava` without any arguments. (This is theoretically optional, but used later for testing the ALSA config. Only skip if you know what you're doing)
 - open `~/.config/cava/config`
@@ -64,7 +65,7 @@ A default config file with all possible parameters can be found here: https://gi
 - Copy the provided `asound.conf` to `/etc/asound.conf`
 
 To configure your sound card:
-- Open the file in a text editor navigate to:
+- Open `/etc/asound.conf` in a text editor and navigate to:
 ```
 ...
 
@@ -115,8 +116,8 @@ If not, something is not set up correctly. Check your config files and make sure
 
 
 ---------------------------------------------------
-# Play Music 
-There are different ways to play music. In general, any audio source can be used as long as its audio output is set to the `pbnrec` ALSA audio device. If you want all audio to be visualized, you may also just declare `pbnrec` as a slave of the default device in your `asound.conf` as follows:
+# Play Music from sources
+There are different ways to play music. In general, any audio source can be used as long as its audio output is set to the `pbnrec` ALSA audio device. If you want all audio to be visualized, you may also just declare `pbnrec` as the default audio device in your `asound.conf` as follows:
 
 ```
 pcm.!default 
@@ -130,7 +131,7 @@ pcm.!default
 Here are some of my favorite ways to play audio:
 
 ## RPI Audio Receiver:
-This is the easiest way to get Raspotify, Bluetooth Audio and AirPlay 2 on your Raspberrry Pi (needs latest Raspberry Pi OS)
+This is the easiest way to get Raspotify (Spotify Connect), Bluetooth Audio and AirPlay 2 on your Raspberrry Pi (needs latest Raspberry Pi OS)
 
 https://github.com/nicokaiser/rpi-audio-receiver
 
@@ -138,9 +139,21 @@ Use the installer script to set up the different methods, then follow the guides
 
 ### Configure Raspotify
 We need to set the output of raspotify to the `pbnrec` device created previously in asound.conf:
-- Change the `ExecStart` parameter in `/usr/lib/systemd/system/raspotify.service`
-to: `ExecStart=/usr/bin/librespot --backend alsa --device pbnrec`
-- save and restart raspotify (`sudo systemctl restart raspotify`)
+- Run ` sudo systemctl edit raspotify.service` to open the configuration in a text editor
+Change its contents to:
+```
+### Editing /etc/systemd/system/raspotify.service.d/override.conf
+### Anything between here and the comment below will become the new contents of the file
+
+[Service]
+ExecStart=
+ExecStart=/usr/bin/librespot --backend alsa --device pbnrec
+
+### Lines below this comment will be discarded
+   ```
+- Restart raspotify: `sudo systemctl restart raspotify`
+
+The spotify connect audio should now play via the speakers and be visible in CAVA
 (It might also work to set it in the config at `/etc/raspotify/conf`)
 
 #### Testing Raspotify
