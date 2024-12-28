@@ -163,6 +163,8 @@ ExecStart=/usr/bin/bluealsa-aplay --pcm=pbnrec
 
 ### Lines below this comment will be discarded
 ```
+- restart bluez-aplay: `sudo systemctl restart bluealsa-aplay.service`
+- check if it is running successfully: `sudo systemctl status bluealsa-aplay.service`
 
 ### Other audio sources
 As said, is possible to use other sources of audio (eg. Bluetooth / Browser / System Sounds / other music player / Microphone (?)), which need to be configured separately.
