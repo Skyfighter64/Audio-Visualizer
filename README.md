@@ -15,10 +15,7 @@ https://www.youtube.com/watch?v=6K1Sigc1xIU
 
 ## Spotify Premium and alternative audio sources
 In order to use spotify connect, a Spotify Premium account is required.
-If you want to stream from other audio sources, it is also possible (like bluetooth devices or Raspberry Pi system sounds). See section "Other audio sources".
-
-However, this setup does currently only include a guide for Raspotify. If you want to use other audio sources, just make sure to set the audio output device of the other programs to `pbnrec` in their respective configuration and ignore the Raspotify section. Everything else should stay the same.
-
+If you want to stream from other audio sources, it is also possible (like bluetooth devices or Raspberry Pi system sounds). See below for more.
 
 # Install
 Use this to clone the repo and also clone the [Python-ALUP](https://github.com/Skyfighter64/Python-ALUP) submodule:\
@@ -162,6 +159,7 @@ The spotify connect audio should now play via the speakers and be visible in CAV
 
 
 ### Configure Bluez-aplay
+Note: this does currently not work and is WIP
 This bluetooth audio player plays anything sent from connected bluetooth devices.
 To configure the output, edit the systemd file for the `bluealsa-aplay` service:
 - use `sudo systemctl edit bluealsa-aplay.service`, and paste in the following lines:
