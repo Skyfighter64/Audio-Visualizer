@@ -159,7 +159,6 @@ The spotify connect audio should now play via the speakers and be visible in CAV
 
 
 ### Configure Bluez-aplay
-Note: this does currently not work and is WIP
 This bluetooth audio player plays anything sent from connected bluetooth devices.
 To configure the output, edit the systemd file for the `bluealsa-aplay` service:
 - use `sudo systemctl edit bluealsa-aplay.service`, and paste in the following lines:
@@ -176,6 +175,16 @@ ExecStart=/usr/bin/bluealsa-aplay --pcm=pbnrec
 ```
 - restart bluez-aplay: `sudo systemctl restart bluealsa-aplay.service`
 - check if it is running successfully: `sudo systemctl status bluealsa-aplay.service`
+
+__Note:__
+CAVA may not work if pipewire and wireplumber are running as wireplumber automatically takes the bluetooth audio stream and routes it to the speaker.
+To fix this, you need to disable wireplumber or configure the routing to pbnrec in wireplumber.
+
+To disable Wireplumber: 
+- Stop wireplumber using `systemctl --user stop wireplumber` and retry playing bluetooth audio. If this works both on the speakers and with cava, disable wireplumber fully using `systemctl --user disable wireplumber`. __WARNING:__ This will break any other Software which uses pipewire/Wireplumber for audio. If you still need it, you can try disabling bluetooth in the wireplumber configuration.
+
+### Line In / Mic In
+Todo
 
 ### Other audio sources
 As said, is possible to use other sources of audio (eg. Bluetooth / Browser / System Sounds / other music player / Microphone (?)), which need to be configured separately.
