@@ -181,7 +181,14 @@ CAVA may not work if pipewire and wireplumber are running as wireplumber automat
 To fix this, you need to disable wireplumber or configure the routing to pbnrec in wireplumber.
 
 To disable Wireplumber: 
-- Stop wireplumber using `systemctl --user stop wireplumber` and retry playing bluetooth audio. If this works both on the speakers and with cava, disable wireplumber fully using `systemctl --user disable wireplumber`. __WARNING:__ This will break any other Software which uses pipewire/Wireplumber for audio. If you still need it, you can try disabling bluetooth in the wireplumber configuration.
+- `systemctl --user disable wireplumber.service`
+- `systemctl --user mask wireplumber.service`
+- `systemctl --user stop wireplumber.service`
+ __WARNING:__ This will break any other Software which uses pipewire/Wireplumber for audio. If you still need it, you can try disabling bluetooth in the wireplumber configuration.
+To undo:
+- `systemctl --user unmask wireplumber.service`
+- `systemctl --user enable wireplumber.service`
+- `systemctl --user start wireplumber.service`
 
 ### Line In / Mic In
 Todo
