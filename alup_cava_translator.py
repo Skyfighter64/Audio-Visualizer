@@ -10,17 +10,19 @@ from pathlib import Path
 import configparser
 
 
-sys.path.insert(0,'Python-ALUP')
-import importlib  
+#sys.path.insert(0,'Python-ALUP')
+#import importlib  
 # import the main ALUP library
-Device = getattr(importlib.import_module("Python-ALUP.src.Device"), "Device")
+#Device = getattr(importlib.import_module("Python-ALUP.src.Device"), "Device")
 #from Python-ALUP.src.Device import Device
 # import command definitions
-Command = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Command")
+#Command = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Command")
 #from Python-ALUP.src.Frame import Command
 #from Python-ALUP.src.Frame import Frame
-Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
+#Frame = getattr(importlib.import_module("Python-ALUP.src.Frame"), "Frame")
 
+from pyalup.Device import Device
+from pyalup.Frame import Frame, Command
 
 # note: make sure, alsa is configured accordingly and loopback devices are active
 
