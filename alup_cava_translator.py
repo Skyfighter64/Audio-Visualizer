@@ -111,7 +111,7 @@ def main():
             device = Device()
             device.TcpConnect(ip, port)
             devices.append(device)
-            logging.info(f"Connected to TCP Device {port}:{baud}")
+            logging.info(f"Connected to TCP Device {ip}:{port}")
 
     # complain if no devices were found at all
     if(len(devices) == 0):
@@ -332,7 +332,7 @@ def TcpConnectionParametersFromString(parameters : str):
     splitted = parameters.split(':')
     ip = splitted[0]
     port = int(splitted[1]) if len(splitted) > 1 else 5012
-    ip, port
+    return ip, port
 
 def SetLogLevel(logger : logging.Logger, level):
     """Set the log level.
