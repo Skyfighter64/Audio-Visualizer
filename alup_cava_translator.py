@@ -26,6 +26,7 @@ from pyalup.Device import Device
 from pyalup.Frame import Frame, Command
 from pyalup.TcpConnection import TcpConnection
 from pyalup.SerialConnection import SerialConnection
+from pyalup.Group import Group
 
 # note: make sure, alsa is configured accordingly and loopback devices are active
 
@@ -99,22 +100,22 @@ def main():
 
     # read in one or more devices from command line arguments
     #TODO: use ALUP Groups???
-    devices = []
+    group = Group()
     for serial_device in args.serial:
         port, baud = SerialConnectionParametersFromString(serial_device[0])
         device = Device()
         device.SerialConnect(port, baud)
-        devices.append(device)
+        group.Add(device)
         logging.info(f"Connected to Serial Device {port}:{baud}")
     for tcp_device in args.tcp:
             ip, port = TcpConnectionParametersFromString(tcp_device[0])
             device = Device()
             device.TcpConnect(ip, port)
-            devices.append(device)
+            group.Add(device)
             logging.info(f"Connected to TCP Device {ip}:{port}")
 
     # complain if no devices were found at all
-    if(len(devices) == 0):
+    if(len(group.devices) == 0):
         logging.error("No Devices specified. Specify devices in commandline arguments! See --help for more\nExiting.")
         exit()
 
@@ -184,11 +185,13 @@ def main():
                     colors.append(color)
 
                 # send the colors to each device
-                for device in devices:
+                for device in group.devices:
                     # NOTE: for now only up to 100 LEDs, cutting off if a device has less
                     # TODO: stretch / interpolate for devices with more leds
                     device.SetColors(colors[:device.configuration.ledCount])
-                    device.Send()   
+                
+                # Send to every device asynchronously
+                group.Send()
         
         except KeyboardInterrupt as e:
             #cleanup
@@ -198,9 +201,8 @@ def main():
             print("Deleting FIFO at " + str(fifo_path.resolve()))
             os.remove(fifo_path)
             print("Disconnecting ALUP...")
-            for device in devices:
-                device.Clear()
-                device.Disconnect()
+            group.Clear()
+            group.Disconnect()
     print("Done.")
 
 
