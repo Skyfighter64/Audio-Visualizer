@@ -180,8 +180,8 @@ def main():
                     color = Effect(i, bars)
                     # apply audio effects
                     color = AdjustBrightness(color, sample)
-
-                    colors.append(colors)
+                    
+                    colors.append(color)
 
                 # send the colors to each device
                 for device in devices:
