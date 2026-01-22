@@ -179,11 +179,11 @@ def main():
                     # add visualizer function to change brightness of each 8bit led color depeding on visualizer
                     color = AdjustBrightness(color, sample)
                     # set color to led  (colors are stored together in 24bit int as 0xrrggbb)     
-                    arduino.frame.colors.append(color)
+                    frame.colors.append(color)
                 # send led frame
                 #print("sending next frame...")
                 # todo: this is hanging with more than 10 leds 
-                arduino.Send()
+                arduino.Send(frame)
         except KeyboardInterrupt as e:
             #cleanup
             print("Ctl-C pressed")
