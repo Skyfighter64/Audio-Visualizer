@@ -103,10 +103,16 @@ def main():
     if(args.serial is not None):
         logging.info("Using Serial Device from Commandline Args: " + str(args.serial))
         arduino.connection = SerialConnectionFromString(args.serial[0])
+        arduino.connection.Connect()
+        # establish ALUP connection
+        arduino._AlupConnect()
     elif(args.tcp is not None):
         logging.info("Using TCP Device from Commandline Args: " + str(args.tcp))
         arduino.connection = TcpConnectionFromString(args.tcp[0])
         arduino._FRAME_DROP_TIMEOUT = 25_000
+        arduino.connection.Connect()
+        # establish ALUP connection
+        arduino._AlupConnect()
     else:
         # conenct to default device
         print("Connecting to Serial ALUP at %s, %d" % (COM_PORT, BAUD_RATE))
