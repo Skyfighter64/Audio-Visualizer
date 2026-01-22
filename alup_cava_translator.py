@@ -221,10 +221,8 @@ def RainbowColor(i):
 # effect applied to the leds with all values which might be useful to generate an effect
 # @param currentLed: the index of the led this color will correspond to
 # @param ledCount: the total number of Leds
-# @param sample: the current visualizer sample 
-#                Note: no need to apply the visualizer effects here, this is done in 'AdjustBrightness(...)'
 # returns a 24bit color value in the format 0xrrggbb
-def Effect(currentLed, ledCount, sample):
+def Effect(currentLed, ledCount):
     return RainbowColor(currentLed/ledCount)
 
 
