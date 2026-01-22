@@ -102,10 +102,10 @@ def main():
 
     if(args.serial is not None):
         logging.info("Using Serial Device from Commandline Args: " + str(args.serial))
-        arduino = SerialConnectionFromString(args.serial[0])
+        arduino.connection = SerialConnectionFromString(args.serial[0])
     elif(args.tcp is not None):
         logging.info("Using TCP Device from Commandline Args: " + str(args.tcp))
-        arduino = TcpConnectionFromString(args.tcp[0])
+        arduino.connection = TcpConnectionFromString(args.tcp[0])
         arduino._FRAME_DROP_TIMEOUT = 25_000
     else:
         # conenct to default device
