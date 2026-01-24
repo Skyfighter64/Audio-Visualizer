@@ -56,8 +56,8 @@ parser = argparse.ArgumentParser(prog='ALUP Audio Visualizer',
 parser.add_argument('-c', '--config', action='store', nargs=1, type=Path, help="Specify a custom CAVA configuration to use for visualization.\nIf not set, a copy of the configuration at %s will be generated to the tmp folder and automatically adjusted" % ((Path(__file__).parent.resolve() / "cava_config").resolve()))
 parser.add_argument('-t', '--tmp', action='store', nargs=1, type=Path, help="Specify a tmp directory to store temporary files in. Default is %s" % (TMP_DIRECTORY.resolve()))
 
-parser.add_argument('--serial', nargs=1, action='append', default=[], help="Specify a serial connected ALUP device replacing the default device: [PORT]{:[BAUD]} eg: COM7:115200. Default Baud:115200")
-parser.add_argument('--tcp', nargs=1, action='append', default=[], help="Specify a TCP connected ALUP device replacing the default device. Format: [ip]{:[PORT]} eg: 127.0.0.1:5012. Default Port: 5012")
+parser.add_argument('--serial', nargs=1, action='append', default=[], help="Specify a serial connected ALUP device replacing the default device: [PORT]{:[BAUD]} eg: COM7:115200. Default Baud:115200. This argument can be specified multiple times")
+parser.add_argument('--tcp', nargs=1, action='append', default=[], help="Specify a TCP connected ALUP device replacing the default device. Format: [ip]{:[PORT]} eg: 127.0.0.1:5012. Default Port: 5012. This argument can be specified multiple times")
 parser.add_argument('-v', '--verbose', action='store_true', help="Enable verbose logging") 
 parser.add_argument('--loglevel', default='INFO', help='Specify the minimum level for log messages (Either String or Int value). Possible log levels: NOTSET (0), DEBUG (10), INFO (20), WARNING (30), ERROR (40), CRITICAL (50). Default: INFO')
 
