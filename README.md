@@ -7,23 +7,25 @@ Sorry for the bad quality :>\
 https://www.youtube.com/watch?v=6K1Sigc1xIU
 
 # Requirements
-- Spotify Premium access
+- Raspotify, Spotify Premium access (if using Spotify Conenct)
 - Raspberry Pi to play Audio (any other linux system will probably work)
 - [CAVA Audio Visualizer](https://github.com/karlstav/cava)
 - Audio Loopback devices (usually via `sudo modprobe snd-aloop`)
-- Arduino connected via USB and [Arduino-ALUP](https://github.com/Skyfighter64/Arduino-ALUP) configured and running
+- Arduino/ESP connected via USB/Wifi and [Arduino-ALUP](https://github.com/Skyfighter64/Arduino-ALUP) configured and running
+
+NOTE: On Raspberry Pi (at least for me) the USB Connection is unreliable. Therefore, ESP + WiFi/TCP is recommended
 
 ## Spotify Premium and alternative audio sources
 In order to use spotify connect, a Spotify Premium account is required.
 If you want to stream from other audio sources, it is also possible (like bluetooth devices or Raspberry Pi system sounds). See below for more.
 
 # Install
-Use this to clone the repo and also clone the [Python-ALUP](https://github.com/Skyfighter64/Python-ALUP) submodule:\
-`git clone --recurse-submodules https://github.com/Skyfighter64/Audio-Visualizer.git`\
-or
-- `git clone https://github.com/Skyfighter64/Audio-Visualizer.git`
-- `cd Audio-Visualizer`
-- `git submodule update --init`
+0. Install [Raspotify](https://github.com/dtcooper/raspotify) and [CAVA](https://github.com/karlstav/cava)
+1. Install [Python-ALUP](https://github.com/Skyfighter64/Python-ALUP)
+    - `git clone git@github.com:Skyfighter64/Python-ALUP.git`\
+    - `python3 -m pip install ./Python-ALUP`
+2. Install Audio Visualizer:
+    - `git clone https://github.com/Skyfighter64/Audio-Visualizer.git`
 
 # Setup
 This section explains how to set up the different components needed so audio coming from different sources
@@ -54,15 +56,13 @@ source = loopout
 ...
 
 ```
-Everything else can be configured as you like.
 A default config file with all possible parameters can be found here: https://github.com/karlstav/cava/blob/master/example_files/config
 
 ## ALSA
 - Backup your current `/etc/asound.conf` config file
-- Copy the provided `asound.conf` to `/etc/asound.conf`
+- Copy the provided `asound.conf` from this repo to `/etc/asound.conf`
 
-To configure your sound card:
-- Open `/etc/asound.conf` in a text editor and navigate to:
+To configure your sound card, open `/etc/asound.conf` in a text editor and navigate to:
 ```
 ...
 
@@ -83,6 +83,7 @@ pcm._usbSound
 ...
 ```
 - Change `plughw:Device;` to the name of your desired audio output device. (All devices can be listed with `aplay -l`)  
+- If using PipeWire / Wireplumber as Linux Audio Backend: Install `pipewire-alsa` for audio to work.
 
 ## Audio Loopback
 Start the audio loopback kernel module:\
@@ -107,9 +108,27 @@ If not, something is not set up correctly. Check your config files and make sure
 ### Troubleshooting:
 - Use `aplay /usr/share/sounds/alsa/Front_Center.wav --device=usbSound` to to test only your speakers. If you can't hear anything, see the ALSA setup above on how to set the correct sound card for output.
 - If cava is not responding to the sounds:
+    - If using PipeWire / Wireplumber as Linux Audio Backend: Install `pipewire-alsa` for audio to work.
     - try changing the cava sensitivity and number of bars by using the arrow keys 
     - make sure loopback devices are shown when running `aplay -l`. See Audio Loopback setup.
     - see the CAVA setup section again on how to set the audio input for CAVA
+
+
+## ALUP:
+    - Download and install [Arduino-ALUP](https://github.com/Skyfighter64/Arduino-ALUP) on your microcontroller. Make sure to select the right connection type and output pin. To test if ALUP works correctly, you can use [ALUP-Controller](https://github.com/Skyfighter64/ALUP-Controller)
+
+---------------------------------------------------
+
+# Usage:
+
+```
+python3 audio_visualizer.py {--config [path]} {--tcp [ip address]} {--serial [serial port]} {--loglevel [loglevel]}
+
+```
+I recommend the configs:
+- `./configs/party_v2`
+- `./configs/low_res`
+
 
 
 ---------------------------------------------------
@@ -159,6 +178,8 @@ The spotify connect audio should now play via the speakers and be visible in CAV
 
 
 ### Configure Bluez-aplay
+Note from the future: Bluetooth-Audio has changed a lot recently, this might be outdated.
+
 This bluetooth audio player plays anything sent from connected bluetooth devices.
 To configure the output, edit the systemd file for the `bluealsa-aplay` service:
 - use `sudo systemctl edit bluealsa-aplay.service`, and paste in the following lines:
@@ -201,11 +222,8 @@ If you are using another source than Raspotify for playing audio, make sure to s
 If this is not an option, you can also try setting the `pbnrec` as default sink in `/etc/asound.conf` as described earlier. This will output all sounds which have no special output configured to the visualizer and your configured sound card.
 
 
-## Arduino / ALUP
-todo
 
-
-# Configuration
+# Configuration Notes
 The audio visualizer overrides the following parameters of the specified CAVA configuration in order to work properly:
 ```
 [general]
