@@ -3,3 +3,5 @@ alup_cava_translation_layer.py
 /tmp
 log.txt
 .venv/
+venv/
+.vscode
