@@ -1,0 +1,33 @@
+# Unit file to run the audio visualizer as a systemd service
+#
+# INSTALL: 
+#   - Move To ~/.config/systemd/user/ 
+#   - Adjust path for .py file
+
+[Unit]
+# Human readable name of the unit
+Description=ALUP Audio Visualizer
+# try to restart at most 5 times every hour
+StartLimitIntervalSec=3600
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+Environment="VENV=/opt/myapp/venv"
+# TODO: adjust this path to your install location
+WorkingDirectory="/path/to/your/AUDIO-VISUALIZER/"
+Restart=on-failure
+# run the python file; use the venv if present (for raspberry pi), else use the default python 
+ExecStart=/bin/bash -c '\
+if [ -x "$VENV/bin/python" ]; then \
+  exec "$VENV/bin/python" audio_visualizer.py; \
+else \
+  exec /usr/bin/python3 audio_visualizer.py; \
+fi'
+
+
+
+
+[Install]
+WantedBy=default.target
